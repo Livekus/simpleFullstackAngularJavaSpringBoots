@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: feature-flag-admin
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ffa
+    username: ffa
+    password: ffa
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate.jdbc.time_zone: UTC
+      hibernate.format_sql: true
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    default-schema: public
+    create-schemas: true
+
+logging:
+  level:
+    org.flywaydb: info

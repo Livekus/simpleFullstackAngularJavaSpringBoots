@@ -1,0 +1,31 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ffa
+      POSTGRES_USER: ffa
+      POSTGRES_PASSWORD: ffa
+    ports: [ "5432:5432" ]
+    volumes: [ "pgdata:/var/lib/postgresql/data" ]
+    healthcheck:
+      test: [ "CMD-SHELL","pg_isready -U ffa -d ffa" ]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/ffa
+      SPRING_DATASOURCE_USERNAME: ffa
+      SPRING_DATASOURCE_PASSWORD: ffa
+      TZ: UTC
+    ports: [ "8080:8080" ]
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:
