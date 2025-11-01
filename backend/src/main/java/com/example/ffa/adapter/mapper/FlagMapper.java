@@ -22,7 +22,10 @@ public interface FlagMapper {
     })
     Flag toEntity(FlagDtos.CreateFlagReq req);
 
-    @BeanMapping(ignoreByDefault = true)
+    @BeanMapping(
+            nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
+            nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS
+    )
     @Mappings({
             @Mapping(target = "name", source = "name"),
             @Mapping(target = "description", source = "description"),
