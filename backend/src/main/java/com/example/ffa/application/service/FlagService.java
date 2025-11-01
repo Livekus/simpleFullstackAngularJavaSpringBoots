@@ -30,7 +30,8 @@ public class FlagService {
     }
 
     public Page<FlagDtos.FlagDto> search(String q, Boolean enabled, Pageable pageable) {
-        Specification<Flag> spec = Specification.where(FlagSpecs.q(q)).and(FlagSpecs.enabled(enabled));
+        Specification<Flag> spec = Specification.where((root, cq, cb) -> cb.conjunction());
+        spec = spec.and(FlagSpecs.q(q)).and(FlagSpecs.enabled(enabled));
         return repo.findAll(spec, pageable).map(mapper::toDto);
     }
 
