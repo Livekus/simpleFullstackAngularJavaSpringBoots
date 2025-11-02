@@ -13,8 +13,8 @@ jobs:
           cache: maven
       - name: Build & test (Maven Wrapper at repo root)
         run: |
-          chmod +x mvnw || true
-          ./mvnw -B -ntp -f backend/pom.xml verify
+          mvn build
+          mvn test
 
   frontend:
     runs-on: ubuntu-latest
