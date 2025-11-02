@@ -14,30 +14,50 @@ jobs:
           mvn test
   frontend:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+
     steps:
       - uses: actions/checkout@v4
 
+      # Node + cache for pnpm
       - uses: actions/setup-node@v4
+
+      # Install pnpm onto PATH (this is the piece you were missing)
+      - uses: pnpm/action-setup@v4
         with:
-          node-version: '20'
-          cache: 'pnpm'
-          cache-dependency-path: frontend/pnpm-lock.yaml
+          version: 10.20.0
+          run_install: false
 
-      - name: Enable Corepack & activate pnpm
+      # Helpful diagnostics (visible in logs)
+      - name: Show versions
         run: |
-          corepack enable
-          corepack prepare pnpm@10.20.0 --activate
+          node -v
           pnpm -v
+          cat package.json | jq -r '.packageManager // "no-packageManager-field"'
 
+      # Ensure lockfile exists (hard fail if not committed)
+      - name: Verify lockfile
+        run: |
+          test -f pnpm-lock.yaml || (echo "pnpm-lock.yaml missing" && exit 1)
+
+      # Install BEFORE build so local Angular CLI exists in node_modules/.bin
       - name: Install deps
-        working-directory: frontend
         run: pnpm install --frozen-lockfile
 
-      - name: Unit tests (Jest)
-        working-directory: frontend
+      # Frontend unit tests (Jest)
+      - name: Test (Jest)
         run: pnpm test -- --ci
 
+      # Build Angular app
       - name: Build (Angular)
-        working-directory: frontend
         run: pnpm build
+
+      # Optional: publish dist as artifact
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: feature-flag-admin-dist
+          path: frontend/dist/feature-flag-admin
 
