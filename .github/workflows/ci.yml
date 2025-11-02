@@ -1,25 +1,39 @@
 name: CI
 on: [push, pull_request]
+
 jobs:
   backend:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
-        with: { distribution: 'temurin', java-version: '21' }
-      - name: Build & Test
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - name: Build & test (Maven Wrapper at repo root)
         run: |
-          cd backend
-          mvn install
-          mvn test
+          chmod +x mvnw || true
+          ./mvnw -B -ntp -f backend/pom.xml verify
+
   frontend:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with: { node-version: '20' }
-      - name: Install & Test & Build
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+      - name: Enable Corepack & activate pnpm
         run: |
-          cd frontend
-          pnpm build
-          pnpm test
+          corepack enable
+          corepack prepare pnpm@10.20.0 --activate
+      - name: Install deps
+        working-directory: frontend
+        run: pnpm install --frozen-lockfile
+      - name: Unit tests (Jest)
+        working-directory: frontend
+        run: pnpm test -- --ci
+      - name: Build (Angular)
+        working-directory: frontend
+        run: pnpm build
