@@ -13,7 +13,7 @@ jobs:
           cache: maven
       - name: Build & test (Maven Wrapper at repo root)
         run: |
-          mvn build
+          mvn install
           mvn test
 
   frontend:
