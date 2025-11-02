@@ -1,3 +1,4 @@
+# backend/src/main/resources/application.yml
 spring:
   application:
     name: feature-flag-admin
@@ -6,6 +7,7 @@ spring:
     username: ffa
     password: ffa
   jpa:
+
     open-in-view: false
     hibernate:
       ddl-auto: validate
@@ -18,6 +20,18 @@ spring:
     default-schema: public
     create-schemas: true
 
+springdoc:
+  api-docs:
+    enabled: false            # using the static YAML instead of generated docs
+  swagger-ui:
+    disable-swagger-default-url: true
+    urls:
+      - name: v1
+        url: /openapi/ffa-v1.yaml
+
 logging:
   level:
-    org.flywaydb: info
+    root: info
+    com.example.ffa: info
+    org.springframework: warn
+    org.flywaydb: info        # <- as requested
