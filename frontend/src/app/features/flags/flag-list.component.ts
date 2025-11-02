@@ -14,7 +14,7 @@ type Page<T> = { content: T[]; totalElements: number };
     template: `
         <h1 class="text-xl">Flags</h1>
         <div style="margin: 8px 0;">
-            <input placeholder="Search (q)" [(ngModel)]="q" />
+            <input data-testid="search-input" placeholder="Search (q)" [(ngModel)]="q" />
             <button (click)="refresh()">Search</button>
         </div>
         <table class="table">
