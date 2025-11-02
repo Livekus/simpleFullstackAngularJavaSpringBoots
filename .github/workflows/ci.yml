@@ -17,11 +17,27 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with: { node-version: '20' }
-      - name: Install & Test & Build
+        with:
+          node-version: '20'
+          cache: 'pnpm'        # speeds up installs using pnpm-lock.yaml
+
+      # Make pnpm available
+      - name: Enable Corepack & activate pnpm
         run: |
           corepack enable
           corepack prepare pnpm@10.20.0 --activate
-          cd frontend
-          pnpm build
-          pnpm test
+          pnpm --version
+
+      # Install BEFORE build/test so local "ng" exists
+      - name: Install dependencies
+        working-directory: frontend
+        run: pnpm install --frozen-lockfile
+
+      - name: Build (Angular)
+        working-directory: frontend
+        run: pnpm build
+
+      - name: Unit tests (Jest)
+        working-directory: frontend
+        run: pnpm test -- --ci
+
