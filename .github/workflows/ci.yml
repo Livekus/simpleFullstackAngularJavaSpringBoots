@@ -43,18 +43,11 @@ jobs:
       - name: Install deps
         run: pnpm install --frozen-lockfile
 
-      # Frontend unit tests (Jest)
-      - name: Test (Jest)
-        run: pnpm test -- --ci
-
       # Build Angular app
       - name: Build (Angular)
         run: pnpm build
 
-      # Optional: publish dist as artifact
-      - uses: actions/upload-artifact@v4
-        if: success()
-        with:
-          name: feature-flag-admin-dist
-          path: frontend/dist/feature-flag-admin
+      # Frontend unit tests (Jest)
+      - name: Test (Jest)
+        run: pnpm test
 
