@@ -20,6 +20,8 @@ jobs:
         with: { node-version: '20' }
       - name: Install & Test & Build
         run: |
+          corepack enable
+          corepack prepare pnpm@10.20.0 --activate
           cd frontend
-          npm build
-          npm test
+          pnpm build
+          pnpm test
