@@ -10,7 +10,8 @@ jobs:
       - name: Build & Test
         run: |
           cd backend
-          ./mvnw -B -ntp -DskipTests=false test package
+          mvn install
+          mvn test
   frontend:
     runs-on: ubuntu-latest
     steps:
@@ -20,6 +21,5 @@ jobs:
       - name: Install & Test & Build
         run: |
           cd frontend
-          npm ci
-          npm test -- --ci --passWithNoTests
-          npm run build
+          pnpm build
+          pnpm test
